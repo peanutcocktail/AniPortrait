@@ -120,4 +120,3 @@ with gr.Blocks(title="AniPortrait") as blocks_app:
 
 if __name__ == "__main__":
     blocks_app.launch(share=True)
- 

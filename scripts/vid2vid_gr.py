@@ -29,6 +29,12 @@ from src.utils.mp_utils  import LMKExtractor
 from src.utils.draw_util import FaceMeshVisualizer
 from src.utils.pose_util import project_points_with_trans
 
+if torch.backends.mps.is_available():
+  DEVICE = "mps"
+elif torch.cuda.is_available():
+  DEVICE = "cuda"
+else:
+  DEVICE = "cpu"
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -56,12 +62,12 @@ def main():
 
     vae = AutoencoderKL.from_pretrained(
         config.pretrained_vae_path,
-    ).to("cuda", dtype=weight_dtype)
+    ).to(DEVICE, dtype=weight_dtype)
 
     reference_unet = UNet2DConditionModel.from_pretrained(
         config.pretrained_base_model_path,
         subfolder="unet",
-    ).to(dtype=weight_dtype, device="cuda")
+    ).to(dtype=weight_dtype, device=DEVICE)
 
     inference_config_path = config.inference_config
     infer_config = OmegaConf.load(inference_config_path)
@@ -70,13 +76,13 @@ def main():
         config.motion_module_path,
         subfolder="unet",
         unet_additional_kwargs=infer_config.unet_additional_kwargs,
-    ).to(dtype=weight_dtype, device="cuda")
+    ).to(dtype=weight_dtype, device=DEVICE)
 
-    pose_guider = PoseGuider(noise_latent_channels=320, use_ca=True).to(device="cuda", dtype=weight_dtype) # not use cross attention
+    pose_guider = PoseGuider(noise_latent_channels=320, use_ca=True).to(device=DEVICE, dtype=weight_dtype) # not use cross attention
 
     image_enc = CLIPVisionModelWithProjection.from_pretrained(
         config.image_encoder_path
-    ).to(dtype=weight_dtype, device="cuda")
+    ).to(dtype=weight_dtype, device=DEVICE)
 
     sched_kwargs = OmegaConf.to_container(infer_config.noise_scheduler_kwargs)
     scheduler = DDIMScheduler(**sched_kwargs)
@@ -105,7 +111,7 @@ def main():
         pose_guider=pose_guider,
         scheduler=scheduler,
     )
-    pipe = pipe.to("cuda", dtype=weight_dtype)
+    pipe = pipe.to(DEVICE, dtype=weight_dtype)
 
     # date_str = datetime.now().strftime("%Y%m%d")
     # time_str = datetime.now().strftime("%H%M")
