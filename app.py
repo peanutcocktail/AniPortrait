@@ -88,7 +88,7 @@ with gr.Blocks(title="AniPortrait") as blocks_app:
     
     with gr.Row():
         image_input = gr.Image(type="filepath", label="Upload Image")
-        video_input = gr.PlayableVideo(label="Upload Video")
+        video_input = gr.Video(label="Upload Video")
         
     with gr.Row():
         width = gr.Slider(minimum=256, maximum=1024, step=8, value=512, label="Width (-W)")
