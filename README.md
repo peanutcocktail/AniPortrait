@@ -11,6 +11,18 @@ audio and a reference portrait image. You can also provide a video to achieve fa
 
 <a href='https://arxiv.org/abs/2403.17694'><img src='https://img.shields.io/badge/Paper-Arxiv-red'></a>
 
+## Gradio UI for AniPortrait Vid2Vid
+This is a fork of the original project located here: https://github.com/Zejun-Yang/AniPortrait
+I've added a Gradio UI for the Vid2Vid pipeline. 
+
+The changes & additions to the original project are as follows:
+-  Updated requirements to include Gradio install
+-  The Gradio UI allows for reference image upload, reference video upload, frame counting with automatic length field populating, and customizations for height, width, length, cfg, seed, and steps.
+-  Added app.py in the root dir, which is what you will launch for the Gradio UI
+-  Added a modified version of vid2vid.py, called vid2vid_gr.py in the scripts dir. I had to make a slight modification to the vid2vid pipeline, but I didn't want to break the existing one if users wanted to have access to the cmd line inference options. The primary change was how the generated videos were saved.  Previously, they were saved in a unique directory with a unique file name based on date, time, size, seed, etc.  This made it difficult for Gradio to display the result. So vid2vid_gr.py will save the result the same each time, which also means it will be overwritten, so download it if you want to keep it.
+
+![Gradio UI](asset/Gradio2.png)
+
 ## Pipeline
 
 ![pipeline](asset/pipeline.png)
